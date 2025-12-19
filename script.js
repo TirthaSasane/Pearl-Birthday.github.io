@@ -1,20 +1,20 @@
 const canvas = document.getElementById("fireworks");
 const ctx = canvas.getContext("2d");
 const btn = document.getElementById("celebrateBtn");
-const msg = document.getElementById("message");
+const letter = document.getElementById("letter");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let rockets = [];
 let particles = [];
+let fireworksOn = false;
 
+/* CLICK CELEBRATE */
 btn.addEventListener("click", () => {
-  msg.classList.remove("hidden");
-
-  for (let i = 0; i < 6; i++) {
-    rockets.push(new Rocket());
-  }
+  btn.remove();               // delete button
+  letter.classList.remove("hidden");
+  fireworksOn = true;
 });
 
 /* ROCKET */
@@ -22,13 +22,13 @@ class Rocket {
   constructor() {
     this.x = Math.random() * canvas.width;
     this.y = canvas.height;
-    this.speed = Math.random() * 3 + 7;
-    this.explodeY = canvas.height * (0.15 + Math.random() * 0.2);
+    this.speed = 7 + Math.random() * 3;
+    this.targetY = canvas.height * (0.2 + Math.random() * 0.15);
   }
 
   update() {
     this.y -= this.speed;
-    if (this.y <= this.explodeY) {
+    if (this.y <= this.targetY) {
       this.explode();
       return false;
     }
@@ -36,49 +36,53 @@ class Rocket {
   }
 
   draw() {
+    ctx.strokeStyle = "#FFD700";
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.moveTo(this.x, this.y);
-    ctx.lineTo(this.x, this.y + 20);
-    ctx.strokeStyle = "#FFD700";
-    ctx.lineWidth = 3;
+    ctx.lineTo(this.x, this.y + 15);
     ctx.stroke();
   }
 
   explode() {
-    for (let i = 0; i < 120; i++) {
+    for (let i = 0; i < 100; i++) {
       particles.push(new Particle(this.x, this.y));
     }
   }
 }
 
-/* PARTICLES — GOLD ONLY */
+/* PARTICLES */
 class Particle {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.speedX = (Math.random() - 0.5) * 8;
-    this.speedY = (Math.random() - 0.5) * 8;
-    this.gravity = 0.05;
-    this.life = 100;
+    this.vx = (Math.random() - 0.5) * 7;
+    this.vy = (Math.random() - 0.5) * 7;
+    this.life = 80;
   }
 
   update() {
-    this.speedY += this.gravity;
-    this.x += this.speedX;
-    this.y += this.speedY;
+    this.vy += 0.05;
+    this.x += this.vx;
+    this.y += this.vy;
     this.life--;
   }
 
   draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, 2.2, 0, Math.PI * 2);
     ctx.fillStyle = "rgba(255, 215, 0, 0.9)";
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
     ctx.fill();
   }
 }
 
+/* LOOP */
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (fireworksOn && Math.random() < 0.05) {
+    rockets.push(new Rocket());
+  }
 
   rockets = rockets.filter(r => {
     r.draw();
