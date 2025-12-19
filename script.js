@@ -12,26 +12,23 @@ let particles = [];
 btn.addEventListener("click", () => {
   msg.classList.remove("hidden");
 
-  // launch multiple fireworks
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 6; i++) {
     rockets.push(new Rocket());
   }
 });
 
-/* Rocket that shoots up */
+/* ROCKET */
 class Rocket {
   constructor() {
     this.x = Math.random() * canvas.width;
     this.y = canvas.height;
-    this.speed = Math.random() * 3 + 6;
-    this.explodeHeight = canvas.height * 0.25 + Math.random() * 50;
-    this.color = "#ffe066";
+    this.speed = Math.random() * 3 + 7;
+    this.explodeY = canvas.height * (0.15 + Math.random() * 0.2);
   }
 
   update() {
     this.y -= this.speed;
-
-    if (this.y <= this.explodeHeight) {
+    if (this.y <= this.explodeY) {
       this.explode();
       return false;
     }
@@ -40,19 +37,21 @@ class Rocket {
 
   draw() {
     ctx.beginPath();
-    ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
-    ctx.fill();
+    ctx.moveTo(this.x, this.y);
+    ctx.lineTo(this.x, this.y + 20);
+    ctx.strokeStyle = "#FFD700";
+    ctx.lineWidth = 3;
+    ctx.stroke();
   }
 
   explode() {
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 120; i++) {
       particles.push(new Particle(this.x, this.y));
     }
   }
 }
 
-/* Explosion particles */
+/* PARTICLES — GOLD ONLY */
 class Particle {
   constructor(x, y) {
     this.x = x;
@@ -61,7 +60,6 @@ class Particle {
     this.speedY = (Math.random() - 0.5) * 8;
     this.gravity = 0.05;
     this.life = 100;
-    this.color = `hsl(${Math.random() * 60 + 40}, 100%, 60%)`;
   }
 
   update() {
@@ -73,8 +71,8 @@ class Particle {
 
   draw() {
     ctx.beginPath();
-    ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
+    ctx.arc(this.x, this.y, 2.2, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255, 215, 0, 0.9)";
     ctx.fill();
   }
 }
