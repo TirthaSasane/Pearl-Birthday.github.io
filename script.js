@@ -1,14 +1,4 @@
 const btn = document.getElementById('startBtn');
-const canvas = document.getElementById('fireworks');
-const ctx = canvas.getContext('2d');
-const msg = document.getElementById('message');
-
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-
-let fireworks = [], particles = [];
 
 
 btn.addEventListener('click', () => {
