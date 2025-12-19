@@ -9,16 +9,16 @@ body {
   height: 100vh;
   overflow: hidden;
 
-  /* 🔁 CHANGE THIS TO YOUR IMAGE NAME */
+  /* 🔁 PUT YOUR IMAGE NAME HERE */
   background-image: url("background.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 
-  color: #ffe066;
+  color: #ffd700;
 }
 
-/* Dark overlay for readability */
+/* dark overlay */
 body::before {
   content: "";
   position: absolute;
@@ -39,9 +39,8 @@ body::before {
 
 h1 {
   font-size: 3rem;
-  margin-bottom: 30px;
-  text-align: center;
-  text-shadow: 0 0 25px rgba(255, 224, 102, 0.9);
+  margin-bottom: 25px;
+  text-shadow: 0 0 25px rgba(255, 215, 0, 0.9);
 }
 
 .hidden {
@@ -49,24 +48,24 @@ h1 {
 }
 
 button {
-  background: #ffe066;
+  background: #ffd700;
   color: #2b1055;
   border: none;
   padding: 15px 35px;
   font-size: 1.2rem;
   border-radius: 30px;
   cursor: pointer;
-  box-shadow: 0 0 20px rgba(255, 224, 102, 0.7);
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
 }
 
 button:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 35px rgba(255, 224, 102, 1);
 }
 
+/* 🔥 FIREWORKS ON TOP */
 canvas {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 3;
+  pointer-events: none;
 }
