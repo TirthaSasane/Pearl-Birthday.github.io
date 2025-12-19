@@ -1,18 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday!</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday</title>
+  <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    #overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      pointer-events: none;
+    }
+
+    #startBtn {
+      pointer-events: auto;
+      padding: 16px 28px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      background: #ffd84d;
+      color: #3a2a00;
+      box-shadow: 0 0 20px rgba(255,216,77,0.8);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    #startBtn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(255,216,77,1);
+    }
+
+    #message {
+      display: none;
+      text-align: center;
+      color: #ffe98a;
+      text-shadow: 0 0 20px rgba(255,233,138,0.9), 0 0 40px rgba(255,216,77,0.8);
+    }
+
+    #message h1 {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 900; /* bold letters */
+      letter-spacing: 4px;
+      font-family: 'Segoe UI', Tahoma, sans-serif; /* original bold look */
+    }
+
+    #message p {
+      margin-top: 10px;
+      font-size: clamp(0.75rem, 1.8vw, 1rem); /* a bit smaller for longer messages */
+      opacity: 0.95;
+      font-family: Georgia, 'Times New Roman', serif; /* readable paragraph font */
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Happy Birthday, [Friend's Name]!</h1>
-        <button id="fireworkBtn">Press Me 🎉</button>
-        <div id="message" class="hidden">Wishing you the happiest birthday ever! 🥳🎂</div>
-        <canvas id="fireworksCanvas"></canvas>
+  <canvas id="c"></canvas>
+
+  <div id="overlay">
+    <button id="startBtn">Start the Fireworks</button>
+    <div id="message">
+      <h1>HAPPY BIRTHDAY PEARL</h1>
+      <p>You’re not just my best friend — you’re my safe place and my biggest comfort. I know I don’t meet you as much anymore, but I still wait for your messages, and I miss you every single day. I’d still walk on the side closer to the road so you don’t get hurt, and even though I don’t know how to swim, I’d still jump in trying to save you — that’s how much you mean to me. Even when I can’t always be there physically, I promise I’ll always try my best to show up for you in every way that matters. On your birthday, I just want you to know how loved you are, today and always. I love you <3 Happy Birthday. 🎂💖</p>
     </div>
-    <script src="script.js"></script>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    const startBtn = document.getElementById('startBtn');
+    const message = document.getElementById('message');
+
+    let w, h;
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const rockets = [];
+    const particles = [];
+    let running = false;
+
+    const gravity = 0.05;
+    const yellow = '255, 215, 0';
+
+    class Rocket {
+      constructor() {
+        this.x = Math.random() * w;
+        this.y = h + 10;
+        this.vx = (Math.random() - 0.5) * 1;
+        this.vy = - (6 + Math.random() * 3);
+        this.targetY = Math.random() * (h * 0.25); // top 25%
+        this.exploded = false;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += gravity * 0.3;
+        if (this.y <= this.targetY && !this.exploded) {
+          this.explode();
+          this.exploded = true;
+        }
+      }
+      draw() {
+        ctx.save();
+        ctx.fillStyle = `rgba(${yellow},1)`;
+        ctx.shadowColor = `rgba(${yellow},1)`;
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+      explode() {
+        const count = 50 + Math.random() * 30;
+        for (let i = 0; i < count; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 3 + 2;
+          particles.push(new Particle(this.x, this.y, Math.cos(angle) * speed, Math.sin(angle) * speed));
+        }
+      }
+    }
+
+    class Particle {
+      constructor(x, y, vx, vy) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.life = 100 + Math.random() * 40;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += gravity;
+        this.vx *= 0.99;
+        this.vy *= 0.99;
+        this.life--;
+      }
+      draw() {
+        ctx.save();
+        const alpha = Math.max(this.life / 120, 0);
+        ctx.fillStyle = `rgba(${yellow},${alpha})`;
+        ctx.shadowColor = `rgba(${yellow},${alpha})`;
+        ctx.shadowBlur = 20;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function drawBackground() {
+      const grad = ctx.createLinearGradient(0, 0, 0, h);
+      // More subtle evening sky
+      grad.addColorStop(0, '#0b1026');
+      grad.addColorStop(0.6, '#1b2a4a');
+      grad.addColorStop(1, '#2c3e66');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    let lastLaunch = 0;
+    function animate(ts) {
+      requestAnimationFrame(animate);
+      drawBackground();
+
+      if (running && ts - lastLaunch > 400) {
+        rockets.push(new Rocket());
+        lastLaunch = ts;
+      }
+
+      for (let i = rockets.length - 1; i >= 0; i--) {
+        const r = rockets[i];
+        r.update();
+        r.draw();
+        if (r.exploded) rockets.splice(i, 1);
+      }
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.update();
+        p.draw();
+        if (p.life <= 0) particles.splice(i, 1);
+      }
+    }
+    requestAnimationFrame(animate);
+
+    startBtn.addEventListener('click', () => {
+      running = true;
+      startBtn.style.display = 'none';
+      message.style.display = 'block';
+    });
+  </script>
 </body>
 </html>
