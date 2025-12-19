@@ -1,72 +1,104 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Trebuchet MS', sans-serif;
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+const btn = document.getElementById("celebrateBtn");
+const msg = document.getElementById("message");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let rockets = [];
+let particles = [];
+
+btn.addEventListener("click", () => {
+  msg.classList.remove("hidden");
+
+  // launch multiple fireworks
+  for (let i = 0; i < 5; i++) {
+    rockets.push(new Rocket());
+  }
+});
+
+/* Rocket that shoots up */
+class Rocket {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height;
+    this.speed = Math.random() * 3 + 6;
+    this.explodeHeight = canvas.height * 0.25 + Math.random() * 50;
+    this.color = "#ffe066";
+  }
+
+  update() {
+    this.y -= this.speed;
+
+    if (this.y <= this.explodeHeight) {
+      this.explode();
+      return false;
+    }
+    return true;
+  }
+
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+  }
+
+  explode() {
+    for (let i = 0; i < 60; i++) {
+      particles.push(new Particle(this.x, this.y));
+    }
+  }
 }
 
-body {
-  height: 100vh;
-  overflow: hidden;
+/* Explosion particles */
+class Particle {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.speedX = (Math.random() - 0.5) * 8;
+    this.speedY = (Math.random() - 0.5) * 8;
+    this.gravity = 0.05;
+    this.life = 100;
+    this.color = `hsl(${Math.random() * 60 + 40}, 100%, 60%)`;
+  }
 
-  /* 🔁 CHANGE THIS TO YOUR IMAGE NAME */
-  background-image: url("background.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  update() {
+    this.speedY += this.gravity;
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.life--;
+  }
 
-  color: #ffe066;
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+  }
 }
 
-/* Dark overlay for readability */
-body::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 0;
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  rockets = rockets.filter(r => {
+    r.draw();
+    return r.update();
+  });
+
+  particles = particles.filter(p => {
+    p.update();
+    p.draw();
+    return p.life > 0;
+  });
+
+  requestAnimationFrame(animate);
 }
 
-.container {
-  position: relative;
-  z-index: 5;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
+animate();
 
-h1 {
-  font-size: 3rem;
-  margin-bottom: 30px;
-  text-align: center;
-  text-shadow: 0 0 25px rgba(255, 224, 102, 0.9);
-}
-
-.hidden {
-  display: none;
-}
-
-button {
-  background: #ffe066;
-  color: #2b1055;
-  border: none;
-  padding: 15px 35px;
-  font-size: 1.2rem;
-  border-radius: 30px;
-  cursor: pointer;
-  box-shadow: 0 0 20px rgba(255, 224, 102, 0.7);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 35px rgba(255, 224, 102, 1);
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
