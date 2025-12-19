@@ -9,67 +9,47 @@ canvas.height = window.innerHeight;
 let fireworks = [];
 let particles = [];
 
-class Firework {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.targetY = Math.random() * canvas.height / 2;
-        this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
-    }
-    update() {
-        this.y -= 5;
-        if (this.y <= this.targetY) {
-            this.explode();
-            return false;
-        }
-        return true;
-    }
-    explode() {
-        for (let i = 0; i < 50; i++) {
-            particles.push(new Particle(this.x, this.y, this.color));
-        }
-    }
-    draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.shadowColor = this.color;
-        ctx.shadowBlur = 20;
-        ctx.fill();
-    }
-}
-
 class Particle {
     constructor(x, y, color) {
         this.x = x;
         this.y = y;
         this.color = color;
-        this.velocityX = (Math.random() - 0.5) * 8;
-        this.velocityY = (Math.random() - 0.5) * 8;
+        this.speed = Math.random() * 5 + 2;
+        this.angle = Math.random() * 2 * Math.PI;
         this.alpha = 1;
+        this.decay = Math.random() * 0.02 + 0.01;
     }
     update() {
-        this.x += this.velocityX;
-        this.y += this.velocityY;
-        this.alpha -= 0.02;
+        this.x += Math.cos(this.angle) * this.speed;
+        this.y += Math.sin(this.angle) * this.speed;
+        this.alpha -= this.decay;
         return this.alpha > 0;
     }
     draw() {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
         ctx.beginPath();
         ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
-        ctx.globalAlpha = this.alpha;
         ctx.shadowColor = this.color;
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 15;
         ctx.fill();
-        ctx.globalAlpha = 1;
+        ctx.restore();
+    }
+}
+
+function launchFirework() {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height / 2;
+    const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+    for (let i = 0; i < 50; i++) {
+        particles.push(new Particle(x, y, color));
     }
 }
 
 function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    fireworks = fireworks.filter(fw => fw.update());
-    fireworks.forEach(fw => fw.draw());
+    ctx.fillStyle = "rgba(15,32,39,0.2)"; // slight trail effect
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     particles = particles.filter(p => p.update());
     particles.forEach(p => p.draw());
@@ -80,10 +60,10 @@ function animate() {
 btn.addEventListener('click', () => {
     btn.style.display = 'none';
     message.classList.remove('hidden');
-    
+
     // Launch multiple fireworks
-    for (let i = 0; i < 5; i++) {
-        fireworks.push(new Firework(Math.random() * canvas.width, canvas.height));
+    for (let i = 0; i < 8; i++) {
+        setTimeout(launchFirework, i * 300);
     }
 
     animate();
