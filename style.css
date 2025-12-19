@@ -1,4 +1,3 @@
-/* Background gradient like evening sky */
 body, html {
     margin: 0;
     padding: 0;
@@ -16,7 +15,7 @@ body, html {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to top, #0f2027, #203a43, #2c5364); /* evening sky */
+    background: linear-gradient(to top, #0f2027, #203a43, #2c5364);
     color: white;
     text-align: center;
 }
