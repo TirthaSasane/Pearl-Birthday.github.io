@@ -68,7 +68,7 @@ for(let i=0;i<60;i++){ particles.push(new Particle(x,y,color)); }
 
 
 function animate(){
-ctx.fillStyle='rgba(0,0,0,0.2)';
+ctx.fillStyle = 'black';
 ctx.fillRect(0,0,canvas.width,canvas.height);
 fireworks = fireworks.filter(fw=>{ fw.draw(); return !fw.update(); });
 particles = particles.filter(p=>{ p.draw(); p.update(); return p.life>0; });
