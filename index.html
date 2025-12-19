@@ -1,128 +1,32 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Happy Birthday</title>
-<style>
-  body, html {
-    margin:0; padding:0; height:100%; overflow:hidden;
-    background: linear-gradient(#0b1026, #02030a);
-    display:flex; justify-content:center; align-items:center;
-    font-family: sans-serif;
-    color:white;
-  }
-  #startBtn {
-    padding:20px 50px; font-size:1.5rem; border:none; border-radius:50px;
-    background:#ff4d6d; cursor:pointer; box-shadow:0 0 20px rgba(255,77,109,0.8);
-    z-index:10; position:relative;
-  }
-  #message {
-    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-    text-align:center; opacity:0; transition:opacity 2s;
-    z-index:5;
-  }
-  #message h1 { font-size:4rem; margin-bottom:20px; text-shadow:0 0 20px rgba(255,255,255,0.9);}
-  #card {
-    max-width:400px; padding:20px; border-radius:15px; background:rgba(255,255,255,0.1);
-    backdrop-filter:blur(8px); box-shadow:0 0 20px rgba(255,255,255,0.2); font-size:1.1rem;
-  }
-  canvas { position:fixed; top:0; left:0; pointer-events:none; display:none; }
-</style>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
+<div id="overlay">
 <button id="startBtn">Press me</button>
-<canvas id="fireworks"></canvas>
-
-<div id="message">
-  <h1>Happy Birthday 🎉</h1>
-  <div id="card">
-    <p>
-      Happy Birthday! 💖<br>
-      Wishing you endless joy and love on your special day ✨
-    </p>
-  </div>
 </div>
 
-<script>
-const btn = document.getElementById('startBtn');
-const canvas = document.getElementById('fireworks');
-const ctx = canvas.getContext('2d');
-const msg = document.getElementById('message');
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+<canvas id="fireworks"></canvas>
 
-let fireworks=[], particles=[];
 
-btn.addEventListener('click', ()=>{
-  btn.style.display='none';
-  canvas.style.display='block';
-  msg.style.opacity = 1;
-  setInterval(()=>fireworks.push(new Firework()), 600);
-  animate();
-});
+<div id="message">
+<h1>Happy Birthday 🎉</h1>
+<div id="card">
+<p>
+Happy Birthday! 💖<br>
+Wishing you endless joy and love on your special day ✨
+</p>
+</div>
+</div>
 
-class Firework{
-  constructor(){
-    this.x = Math.random()*canvas.width;
-    this.y = canvas.height;
-    this.targetY = Math.random()*canvas.height*0.25;
-    this.speed = 7 + Math.random()*3;
-    this.color = `hsl(${Math.random()*360},100%,60%)`;
-  }
-  update(){
-    this.y -= this.speed;
-    if(this.y <= this.targetY){ explode(this.x,this.y,this.color); return true; }
-    return false;
-  }
-  draw(){
-    ctx.beginPath();
-    ctx.arc(this.x,this.y,3,0,Math.PI*2);
-    ctx.shadowBlur = 20;
-    ctx.shadowColor = this.color;
-    ctx.fillStyle = this.color;
-    ctx.fill();
-  }
-}
 
-class Particle{
-  constructor(x,y,color){
-    this.x=x; this.y=y; this.radius=Math.random()*2+1;
-    this.color=color;
-    this.speedX=(Math.random()-0.5)*6;
-    this.speedY=(Math.random()-0.5)*6;
-    this.life=100;
-  }
-  update(){ this.x+=this.speedX; this.y+=this.speedY; this.life--; }
-  draw(){
-    ctx.beginPath();
-    ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);
-    ctx.shadowBlur = 25;
-    ctx.shadowColor = this.color;
-    ctx.fillStyle = this.color;
-    ctx.fill();
-  }
-}
-
-function explode(x,y,color){
-  for(let i=0;i<60;i++){ particles.push(new Particle(x,y,color)); }
-}
-
-function animate(){
-  ctx.fillStyle='rgba(0,0,0,0.2)';
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-  fireworks = fireworks.filter(fw=>{ fw.draw(); return !fw.update(); });
-  particles = particles.filter(p=>{ p.draw(); p.update(); return p.life>0; });
-  requestAnimationFrame(animate);
-}
-
-window.addEventListener('resize',()=>{
-  canvas.width=window.innerWidth;
-  canvas.height=window.innerHeight;
-});
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
