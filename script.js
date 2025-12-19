@@ -1,72 +1,72 @@
-const btn = document.getElementById("celebrateBtn");
-const msg = document.getElementById("message");
-const canvas = document.getElementById("fireworks");
-const ctx = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let fireworks = [];
-
-btn.addEventListener("click", () => {
-  msg.classList.remove("hidden");
-  launchFireworks();
-});
-
-/* Firework particle */
-class Particle {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    this.radius = Math.random() * 2 + 1;
-    this.color = `hsl(${Math.random() * 60 + 40}, 100%, 60%)`;
-    this.speedX = (Math.random() - 0.5) * 6;
-    this.speedY = (Math.random() - 0.5) * 6;
-    this.life = 100;
-  }
-
-  update() {
-    this.x += this.speedX;
-    this.y += this.speedY;
-    this.life--;
-  }
-
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
-    ctx.fill();
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Trebuchet MS', sans-serif;
 }
 
-function launchFireworks() {
-  for (let i = 0; i < 100; i++) {
-    fireworks.push(
-      new Particle(
-        Math.random() * canvas.width,
-        Math.random() * canvas.height
-      )
-    );
-  }
+body {
+  height: 100vh;
+  overflow: hidden;
+
+  /* 🔁 CHANGE THIS TO YOUR IMAGE NAME */
+  background-image: url("background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  color: #ffe066;
 }
 
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  fireworks.forEach((p, index) => {
-    p.update();
-    p.draw();
-    if (p.life <= 0) {
-      fireworks.splice(index, 1);
-    }
-  });
-
-  requestAnimationFrame(animate);
+/* Dark overlay for readability */
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 0;
 }
 
-animate();
+.container {
+  position: relative;
+  z-index: 5;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
+h1 {
+  font-size: 3rem;
+  margin-bottom: 30px;
+  text-align: center;
+  text-shadow: 0 0 25px rgba(255, 224, 102, 0.9);
+}
+
+.hidden {
+  display: none;
+}
+
+button {
+  background: #ffe066;
+  color: #2b1055;
+  border: none;
+  padding: 15px 35px;
+  font-size: 1.2rem;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(255, 224, 102, 0.7);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 35px rgba(255, 224, 102, 1);
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
