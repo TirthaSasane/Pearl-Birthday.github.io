@@ -1,15 +1,65 @@
-* { margin:0; padding:0; box-sizing:border-box; }
-body { height:100vh; background: black; font-family:sans-serif; color:white; overflow:hidden; }
+/* Background gradient like evening sky */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    font-family: 'Arial', sans-serif;
+}
 
+.container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to top, #0f2027, #203a43, #2c5364); /* evening sky gradient */
+    color: white;
+    text-align: center;
+}
 
-#overlay { position:fixed; inset:0; display:flex; justify-content:center; align-items:center; z-index:10; }
-#startBtn { padding:20px 50px; font-size:1.5rem; border:none; border-radius:50px; background:#ff4d6d; cursor:pointer; box-shadow:0 0 20px rgba(255,77,109,0.8); transition: transform 0.2s ease; }
-#startBtn:hover { transform: scale(1.05); box-shadow:0 0 35px rgba(255,77,109,1); }
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
 
+button {
+    padding: 15px 30px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    background: #ff4b2b;
+    color: white;
+    box-shadow: 0 0 20px #ff4b2b;
+    transition: transform 0.2s;
+}
 
-canvas { position:fixed; top:0; left:0; width:100%; height:100%; display:none; pointer-events:none; z-index:5; }
+button:hover {
+    transform: scale(1.1);
+}
 
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
 
-#message { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; opacity:0; z-index:6; transition: opacity 2s ease; }
-#message h1 { font-size:4rem; margin-bottom:20px; text-shadow:0 0 20px rgba(255,255,255,0.9); }
-#card { max-width:500px; padding:25px 30px; border-radius:20px; background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); box-shadow:0 0 30px rgba(255,255,255,0.2); font-size:1.2rem; line-height:1.6; }
+.hidden {
+    display: none;
+}
+
+#message {
+    font-size: 2rem;
+    margin-top: 20px;
+    animation: fadeIn 2s forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
