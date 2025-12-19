@@ -1,5 +1,5 @@
 * { margin:0; padding:0; box-sizing:border-box; }
-body { height:100vh; background: linear-gradient(#0b1026, #02030a); font-family:sans-serif; color:white; overflow:hidden; }
+body { height:100vh; background: black; font-family:sans-serif; color:white; overflow:hidden; }
 
 
 #overlay { position:fixed; inset:0; display:flex; justify-content:center; align-items:center; z-index:10; }
