@@ -9,15 +9,17 @@ canvas.height = window.innerHeight;
 let fireworks = [];
 let particles = [];
 
+// Particle class for glowing sparks
 class Particle {
-    constructor(x, y, color) {
+    constructor(x, y, color, speed, angle) {
         this.x = x;
         this.y = y;
         this.color = color;
-        this.speed = Math.random() * 5 + 2;
-        this.angle = Math.random() * 2 * Math.PI;
+        this.speed = speed || Math.random() * 5 + 2;
+        this.angle = angle || Math.random() * 2 * Math.PI;
         this.alpha = 1;
-        this.decay = Math.random() * 0.02 + 0.01;
+        this.decay = Math.random() * 0.015 + 0.01;
+        this.size = Math.random() * 2 + 1;
     }
     update() {
         this.x += Math.cos(this.angle) * this.speed;
@@ -29,26 +31,34 @@ class Particle {
         ctx.save();
         ctx.globalAlpha = this.alpha;
         ctx.beginPath();
-        ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
         ctx.shadowColor = this.color;
-        ctx.shadowBlur = 15;
+        ctx.shadowBlur = 20;
         ctx.fill();
         ctx.restore();
     }
 }
 
+// Firework burst
 function launchFirework() {
-    const x = Math.random() * canvas.width;
-    const y = Math.random() * canvas.height / 2;
-    const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
-    for (let i = 0; i < 50; i++) {
-        particles.push(new Particle(x, y, color));
+    const x = Math.random() * canvas.width * 0.9 + canvas.width * 0.05;
+    const y = Math.random() * canvas.height * 0.5 + canvas.height * 0.1;
+    const hue = Math.random() * 360;
+    for (let i = 0; i < 80; i++) {
+        particles.push(new Particle(x, y, `hsl(${hue}, 100%, 50%)`));
     }
 }
 
+// Continuous fireworks show
+function autoFireworks() {
+    launchFirework();
+    setTimeout(autoFireworks, Math.random() * 800 + 400); // random intervals
+}
+
+// Animation loop
 function animate() {
-    ctx.fillStyle = "rgba(15,32,39,0.2)"; // slight trail effect
+    ctx.fillStyle = "rgba(15,32,39,0.25)"; // fading trail effect
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     particles = particles.filter(p => p.update());
@@ -57,18 +67,15 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
+// Button click triggers fireworks and message
 btn.addEventListener('click', () => {
     btn.style.display = 'none';
     message.classList.remove('hidden');
-
-    // Launch multiple fireworks
-    for (let i = 0; i < 8; i++) {
-        setTimeout(launchFirework, i * 300);
-    }
-
+    autoFireworks();
     animate();
 });
 
+// Resize canvas on window resize
 window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
